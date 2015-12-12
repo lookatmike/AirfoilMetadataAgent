@@ -17,6 +17,12 @@ namespace AirfoilMetadataAgent
 		private IpcServer ipcServer;
 		private AirfoilAgentListener agentListener;
 
+		/// <summary>
+		/// Gets the ID of the process whose messages are being listened for.
+		/// This can only be set when creating a new instance.
+		/// </summary>
+		public int ListenForProcessId { get; private set; }
+
 		#region Airfoil Constants
 		// Remote commands
 		const string kPlayPause = "remotePlayPause";
@@ -45,13 +51,24 @@ namespace AirfoilMetadataAgent
 
 		/// <summary>
 		/// Creates a new instance of the agent, which will immediately start listening for Airfoil messages
-		/// and passing them along to the provided listener.
+		/// intended for the current process and passing them along to the provided listener.
 		/// </summary>
 		/// <param name="listener">An AirfoilAgentListener that will receive notifications of incoming messages.</param>
-		public Agent(AirfoilAgentListener listener)
+		public Agent(AirfoilAgentListener listener): this(listener, Process.GetCurrentProcess().Id)
+		{
+		}
+
+		/// <summary>
+		/// Creates a new instance of the agent, which will immediately start listening for Airfoil messages
+		/// intended for the specified process and passing them along to the provided listener.
+		/// </summary>
+		/// <param name="listener">An AirfoilAgentListener that will receive notifications of incoming messages.</param>
+		/// <param name="process">The ID of the process for which to listen for incoming messages.</param>
+		public Agent(AirfoilAgentListener listener, int process)
 		{
 			agentListener = listener;
 			messageBuffer = new AirfoilMessageBuffer();
+			ListenForProcessId = process;
 			Start();
 		}
 
@@ -63,7 +80,7 @@ namespace AirfoilMetadataAgent
 		{
 			if (ipcServer == null)
 			{
-				ipcServer = new IpcServer($"{Process.GetCurrentProcess().Id}_airfoil_metadata", this, 1);
+				ipcServer = new IpcServer($"{ListenForProcessId}_airfoil_metadata", this, 1);
 			}
 		}
 
