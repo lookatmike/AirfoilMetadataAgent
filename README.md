@@ -47,6 +47,8 @@ class AirfoilSupport : AirfoilAgentListener
 }
 ```
 
+See also <a href="https://github.com/lookatmike/MusicBee-AirfoilIntegrationPlugin">MusicBee-AirfoilIntegrationPlugin</a> for a fully working implementation of this library.
+
 ## Credits
 
 The named pipes library is courtesy of <a href="https://github.com/webcoyote/CSNamedPipes">webcoyote</a>.
